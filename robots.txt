@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and sensitive directories
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /vendor/
+Disallow: /config/
+Disallow: /*.sql
+Disallow: /*.log
+
+# Sitemap location
+Sitemap: http://demo.exchange-bridge.rf.gd/sitemap.xml
