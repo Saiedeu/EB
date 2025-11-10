@@ -1,0 +1,50 @@
+<?php
+header('Content-Type: application/json');
+
+// Allow CORS
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+// Handle preflight request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Include your database configuration
+require_once(dirname(__DIR__) . '/includes/config.php');
+require_once(dirname(__DIR__) . '/includes/functions.php');
+require_once(dirname(__DIR__) . '/includes/db.php');
+
+try {
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$input || $input['action'] !== 'generate_exchange_id') {
+        throw new Exception('Invalid request');
+    }
+    
+    // Set timezone
+    $timezone = getSetting('site_timezone', 'Asia/Dhaka');
+    date_default_timezone_set($timezone);
+    
+    // Generate exchange ID using the function
+    $exchangeId = generateExchangeId();
+    
+    // Return success response
+    echo json_encode([
+        'success' => true,
+        'exchange_id' => $exchangeId,
+        'timestamp' => time(),
+        'timezone' => $timezone
+    ]);
+    
+} catch (Exception $e) {
+    // Return error response
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'timestamp' => time()
+    ]);
+}
+?>
